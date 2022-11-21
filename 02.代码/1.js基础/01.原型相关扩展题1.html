@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            做原型相关面试题,注意点:
+                1.到底是修改属性还是修改对象的地址值呢
+                2.到底是在new之前修改的原型对象,还是new之后修改的
+        */
+        function Person(name){
+            this.name = name;
+        }
+
+        // Person.prototype.c=1
+        // Person.prototype = {
+        //     c:1
+        // }
+
+        var p1 = new Person("xiaoming");
+
+        // Person.prototype.c=1
+        Person.prototype = {
+            c:1
+        }
+
+        console.log(p1.c)
+
+        var p2 = new Person("xiaoming");
+        console.log(p2.c)
+    </script>
+</body>
+</html>

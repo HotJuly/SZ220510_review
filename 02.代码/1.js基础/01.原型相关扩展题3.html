@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            可以对基本数据类型添加属性,不会报错
+                语法允许,但是效果很奇怪
+
+            如果将一个基本数据类型的数据,当前对象使用(读取属性值/修改属性值)
+                js都会在堆内存中,创建一个对应的包装类对象
+                number -> Number
+                boolean ->  Boolean
+                string ->  String
+
+                这个对象在执行完该行代码之后,会立即销毁
+        
+        */
+        // var str = 'hello';
+        // // 此处js会先new String(str),产生一个对象,也就是说title属性是添加给这个包装类对象的
+        // str.title = 'world';
+
+        // // String.prototype.title="123"
+
+        // 此处又把str当作对象使用,所以有创建了一个全新的包装类对象,
+        // 但是他身上没有title属性,所以读取结果为undefined
+        // console.log(str + str.title);
+
+        
+        var num = 123;
+        num.count = 4;
+
+        console.log(num + num.count);
+    </script>
+</body>
+</html>

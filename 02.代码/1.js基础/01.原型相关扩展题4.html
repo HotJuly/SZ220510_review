@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            需求:现在有一个data变量,需要得知内部存储的数据类型
+            回答:
+                1.typeof
+                    语法:typeof data
+                    返回值的数据类型:string
+                    返回值:"string","number","boolean","undefined","object",
+                            "function","symbol","bigint"
+
+                    优点:很方便,速度很快
+                    缺点:
+                        1.会将null误识别为object
+                            扩展:因为在内存中,所有的数据都是2进制存储
+                                对象的数据开头是00000开头,而null也是00000开头,导致无无以为是对象
+
+                        2.无法精准区分对象数据类型
+                
+                2.instanceof
+                    语法: A instanceof B
+                    作用:判断A实例对象是不是B数据类型
+                    返回值数据类型:布尔值
+                        true代表是该数据类型
+                        false代表不是该数据类型
+
+                    优点:
+                        1.可以精准的判断当前A数据是不是B类型的
+
+                    缺点:
+                        1.只能判断A是不是B类型,如果不是也无法确定他的类型
+                            也就是说需要提前知道B是谁
+
+                3.Object的toString方法
+                    注意:数组的toString已经被重写过了,所以不能使用这个方法
+                    需要借用Object原型对象上的toString方法实现
+        */
+        // var data = [1,2,3];
+        var data = new Date();
+        // console.log(typeof data)
+        // console.log(data instanceof Array)
+
+        var obj = {
+            name:"xiaoming"
+        }
+        // console.log(obj.toString())
+        // console.log(data.toString())
+        console.log(Object.prototype.toString.call(data).split(' ')[1].replace(']',''))
+        // console.log({}.toString.call(data).split(' ')[1].replace(']',''))
+    </script>
+</body>
+</html>
