@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        /*
+            统一词汇,
+                例如:fn.call(obj)
+                    fn称为被借调函数
+                    call称为借调函数
+                    obj称为强行改变的this指向
+
+            面试题:请说出call和apply的区别
+            回答:
+                1.相同点
+                    1.都可以通过传入第一个实参,来强行改变被借调函数的this指向
+
+                    2.都会同步调用被借调函数
+
+                    3.如果没有传入第一个实参(null||undefined),那么他们都会将被借调函数的this强行改变为window对象
+                        如果传入的是number|string|boolean数据,那么他们就会创建一个包装类对象,
+                            并将该对象作为被借调函数的this指向
+
+                    4.他们都会将被借调函数的执行结果,作为自己的返回值使用
+
+                2.不同点
+                    1.接收参数个数不同
+                        call方法的接收参数个数范围是0->无限大
+                        apply方法的接收参数个数范围是0->2
+        
+        */
+
+        function fn(a,b,c){
+            console.log(this,a,b,c)
+            return a+b+c;
+        }
+        // const result = fn(1,2,3);
+        // console.log(result)
+
+        var obj = {
+            name:"obj",
+            fn:fn
+        }
+
+        // console.log(1)
+        // fn.call(obj);
+        // fn.apply(obj);
+        // console.log(2)
+
+        // fn.call();
+        // fn.apply();
+
+        // obj.fn.call();
+        // obj.fn.apply();
+
+        // const result1 = fn.call(0,1,2,3);
+        // const result2 = fn.call('0',1,2,3);
+        // const result3 = fn.call(true,1,2,3);
+        // const result2 = fn.apply(obj,[3,4,5]);
+        // console.log(result1,result2)
+        //--------------------------------------------
+
+        Function.prototype.myCall=function(thatThis,...args){
+            /*
+                this->被借调函数(fn)
+                thatThis->强行改变的this指向(obj)
+            */
+        //    null在不全等的情况下,他只跟null以及undefined相等
+        // null==null , null==undefined
+            // if(thatThis == null){
+
+
+            if(thatThis === null||thatThis === undefined){
+                thatThis = window;
+            }
+
+            if(typeof thatThis==='number'||typeof thatThis==='string'||typeof thatThis==='boolean'){
+                // thatThis = new Number(thatThis)
+                thatThis = new Object(thatThis);
+            }
+
+            thatThis._fn = this;
+
+            var result = thatThis._fn(...args);
+
+            delete thatThis._fn;
+
+            return result;
+        }
+        // const result1 = fn.myCall(obj,1,2,3);
+        const result1 = fn.myCall(0,1,2,3);
+        const result2 = fn.myCall('0',1,2,3);
+        const result4 = fn.myCall(true,1,2,3);
+        console.log(result4)
+    </script>
+</body>
+</html>
