@@ -29,6 +29,8 @@
                     如果内部就有多个函数都使用到了外层的变量,也只会产生一个闭包对象
                         所有内部函数共享这一个闭包对象
 
+                    一个内部函数如果使用到了多层外部函数的变量,那么会跟每个外层函数都生成一个闭包对象
+
             3.闭包的优点(好处)
                 1.延长局部变量的生命周期
                     当外部函数执行结束之后,内部的所有变量应该会被销毁
@@ -67,7 +69,7 @@
             7.闭包的使用场景
                 函数防抖,函数节流
                 函数柯里化
-                
+
 
         */
       /*
@@ -193,38 +195,53 @@
       //   wrap();
 
       //---------------------------------------
+      //   function wrap() {
+      //     var a = 1;
+      //     function inner1() {
+      //       a++;
+      //       console.log("inner", a);
+      //     }
+      //     function inner2() {
+      //       a += 2;
+      //       console.log("inner", a);
+      //     }
+      //     return {
+      //       inner1,
+      //       inner2,
+      //     };
+      //   }
+
+      //   var {inner1,inner2} = wrap();
+      //   inner1();//2 2
+      //   inner1();//3 3
+      //   inner1();//4 4
+      //   inner1();//5 5
+
+      //   inner2();//7   3
+      //   inner2();//9   5
+      //   inner2();//11  7
+      //   inner2();//13  9
+
+      //   inner1=null;
+      //   inner2=null;
+
+      //   var {inner1,inner2} = wrap();
+      //   inner2();//15  3
+
+      //-----------------------------------------
       function wrap() {
         var a = 1;
-        function inner1() {
-          a++;
-          console.log("inner", a);
+        function fn1() {
+          var b = 2;
+          function inner() {
+            console.log("inner", a, b);
+          }
+          inner();
         }
-        function inner2() {
-          a += 2;
-          console.log("inner", a);
-        }
-        return {
-          inner1,
-          inner2,
-        };
+        fn1();
       }
 
-      var {inner1,inner2} = wrap();
-      inner1();//2 2
-      inner1();//3 3
-      inner1();//4 4
-      inner1();//5 5
-
-      inner2();//7   3
-      inner2();//9   5
-      inner2();//11  7
-      inner2();//13  9
-
-      inner1=null;
-      inner2=null;
-
-      var {inner1,inner2} = wrap();
-      inner2();//15  3
+      wrap();
     </script>
   </body>
 </html>
