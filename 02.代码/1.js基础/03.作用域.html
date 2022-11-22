@@ -61,6 +61,7 @@
 
                 3.块级作用域
                     ES6新增的作用域,必须使用let或者const才会出现块级作用域
+                      使用形参默认值,也会出现块级作用域
 
             7.形参默认值
                 只要函数中写了形参默认值,那么函数内部的代码都相当于包裹在一个块级作用域中执行
@@ -198,7 +199,7 @@
       //     var b = 2;
       //     console.log(a,b,x,y);
       //     var y = 3;
-      //     // console.log(a,b,x,y);
+      //     console.log(a,b,x,y);
       // }
       // fn();
 
@@ -216,10 +217,68 @@
       // fn();
 
       //----------------------------
+      // var x = 1;
+
+      // function wrap(
+      //   x,
+      //   y = function () {
+      //     x = 3;
+      //     console.log("two", x);
+      //   }
+      // ) {
+      //   console.log("one", x);
+      //   var x = 2;
+      //   y();
+      //   console.log("three", x);
+      // }
+
+      // wrap();
+      // console.log("four", x);
+
+      //---------------------------------
+      
+      // var x = 1;
+
+      // function wrap(
+      //   x,
+      //   y = function () {
+      //     x = 3;
+      //     console.log("two", x);
+      //   }
+      // ) {
+      //   console.log("one", x);
+      //   // var x = 2;
+      //   y();
+      //   console.log("three", x);
+      // }
+
+      // wrap();
+      // console.log("four", x);
+      //---------------------------------
+      
+      // var x = 1;
+
+      // function wrap(
+      //   xx,
+      //   y = function () {
+      //     x = 3;
+      //     console.log("two", x);
+      //   }
+      // ) {
+      //   console.log("one", x);
+      //   var x = 2;
+      //   y();
+      //   console.log("three", x);
+      // }
+
+      // wrap();
+      // console.log("four", x);
+      //---------------------------------
+      
       var x = 1;
 
       function wrap(
-        x,
+        x = 4,
         y = function () {
           x = 3;
           console.log("two", x);

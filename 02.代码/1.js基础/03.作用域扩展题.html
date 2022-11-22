@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+            假设具名函数表达式具有预解析功能,那么打印结果应该是1,1
+            假设具名函数表达式不具有预解析功能,那么打印结果应该是函数体,函数体
+
+            具名函数表达式特点
+                1.该函数名称仅在函数内部可见,对外层作用域不会有影响
+                2.不仅只有内部可见,而且不可修改
+        */
+      //   var a = 1;
+      //   var obj = {
+      //     a: 2,
+      //     fn: function a() {
+      //       a = 3;
+      //       console.log("fn", a);
+      //     },
+      //   };
+      //   //   obj.fn = function a(){}
+
+      //   obj.fn();
+      //   console.log("window", a);
+
+      //------------------------------------
+
+      //   function a() {
+      //     console.log("fn", a);
+      //   }
+      //   var a;
+      //   var obj;
+      //   a = 1;
+      //   obj = {
+      //     a: 2,
+      //     fn: 0x001,
+      //   };
+      //   //   obj.fn = function a(){}
+
+      //   obj.fn();
+      //   console.log("window", a);
+
+      //----------------------------------
+      //   var a;
+      //   var obj;
+      //   a = 1;
+      //   obj = {
+      //     a: 2,
+      //     fn: function a() {
+      //       console.log("fn", a);
+      //     },
+      //   };
+      //   //   obj.fn = function a(){}
+
+      //   obj.fn();
+      //   console.log("window", a);
+
+      //-----------------------------------
+      var a = 1;
+      (function a() {
+        a=3;
+        console.log("inner", a);
+      })();
+      console.log("wrap", a);
+    </script>
+  </body>
+</html>
