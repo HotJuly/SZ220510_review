@@ -16,28 +16,73 @@
       aaaaaaa
   </div>
   <script>
-      Promise.resolve().then(() => { // ?任务
+    /*
+    执行顺序:主线程代码->清空微任务队列->GUI线程渲染页面->执行宏任务
+        更新页面流程:清空微任务队列->GUI线程渲染页面->执行宏任务
+
+    GUI线程与js线程是互斥的
+
+    js线程主要解析js代码
+    GUI线程主要负责页面的渲染
+
+    问题:挂载和渲染是不是同一个东西?
+    回答:
+        不是同一个东西
+        1.挂载:将DOM节点插入到html结构中
+        2.渲染:将html的内容绘制到页面上
+
+        挂载是同步操作
+        渲染是异步操作
+    
+
+    问题:为什么明明具有宏任务,还要有微任务?
+    回答:
+        同样是操作10W次DOM节点
+        如果是每个宏任务中操作一次DOM,那么最终10W次渲染
+        如果是每个微任务中操作一次DOM,那么最终1次渲染
+            防抖,将10W次的微任务操作DOM的情况,只根据最后一次进行渲染
+
+    扩展:
+        问题1:Vue更新数据是同步更新还是异步更新?
+            同步更新
+
+        问题2:Vue更新DOM是同步更新还是异步更新?
+            异步更新(其实就是在微任务中更新DOM的)
+
+    */
+      Promise.resolve().then(() => { // 微任务
           alert('promise1') // 页面渲染了吗?
       }) 
 
-      Promise.resolve().then(() => { // ?任务
+      Promise.resolve().then(() => { // 微任务
           alert('promise2') // 页面渲染了吗?
       }) 
 
-      setTimeout(() => {// ?任务
+      setTimeout(() => {// 宏任务
           alert(document.getElementById('content').innerHTML)  // 页面渲染了吗?
       }, 0)
 
-      document.getElementById('test').onclick = () => {// ?任务
+      document.getElementById('test').onclick = () => {// 宏任务
+        
+        // 为什么渲染要是异步的?
+        // 防抖操作
+        // 由于页面修改过快,即便是同步渲染,用户也看不出这个变化
+        // 为了节省渲染性能,会根据最后的结果,渲染一次页面
+          document.getElementById('content').innerHTML = 'xxxx'
+          document.getElementById('content').innerHTML = 'xxxx1'
+          document.getElementById('content').innerHTML = 'xxxx2'
+          document.getElementById('content').innerHTML = 'xxxx3'
+          document.getElementById('content').innerHTML = 'xxxx4'
+          document.getElementById('content').innerHTML = 'xxxx5'
           document.getElementById('content').innerHTML = 'xxxx'
 
           alert(document.getElementById('content').innerHTML)
 
-          setTimeout(() => {// ?任务  
+          setTimeout(() => {// 宏任务  
               alert(document.getElementById('content').innerHTML) // 页面更新渲染了吗?
           }, 0); 
 
-          Promise.resolve().then(() => { // ?任务 
+          Promise.resolve().then(() => { // 微任务 
               alert('promise3') //页面更新渲染了吗?
           }) 
       }

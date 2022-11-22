@@ -48,15 +48,15 @@
         
         */
 
-      // function fn(a,b,c){
-      //     console.log(this,a,b,c)
-      //     return a+b+c;
-      // }
+      function fn(a,b,c){
+          console.log(this,a,b,c)
+          return a+b+c;
+      }
 
-      // var obj = {
-      //     name:"obj",
-      //     fn:fn
-      // }
+      var obj = {
+          name:"obj",
+          fn:fn
+      }
 
       // fn.call(obj,1,2,3);
       // fn();
@@ -71,24 +71,27 @@
       // console.log(result === fn)
 
       //--------------------------------------------
-      // Function.prototype.myBind=function(thatThis,...args){
-      //     /*
-      //         this->被借调函数(fn)
-      //         thatThis->强行指定的this指向(obj)
-      //     */
+      Function.prototype.myBind=function(thatThis,...args){
+          /*
+              this->被借调函数(fn)
+              thatThis->强行指定的this指向(obj)
+          */
 
-      //     var that = this;
-      //     return function(...args2){
-      //         return that.call(thatThis,...args,...args2);
-      //     }
+          var that = this;
+          return function(...args2){
+              return that.call(thatThis,...args,...args2);
+          }
 
-      // }
+      }
 
-      // const result = fn.myBind(obj,3,4);
+      const result = fn.myBind(obj,3,4);
       // const val = result(5);
       // result();
       // result();
-      // console.log(val)
+
+      // const fn2 = result.bind(window)
+      // fn2();
+      const fn2 = result.call(window)
 
       //--------------------------------------
       /*
@@ -146,18 +149,18 @@
       //   console.log(p1, p2);
 
       //---------------------------------------
-      function person(sex, age, name) {
-        return {
-          name,
-          age,
-          sex,
-        };
-      }
+      // function person(sex, age, name) {
+      //   return {
+      //     name,
+      //     age,
+      //     sex,
+      //   };
+      // }
 
-      var young = person.bind(null,"女", 18);
-      var p1 = young("xiaohong");
-      var p2 = young("xiaohong1");
-      console.log(p1, p2);
+      // var young = person.bind(null,"女", 18);
+      // var p1 = young("xiaohong");
+      // var p2 = young("xiaohong1");
+      // console.log(p1, p2);
     </script>
   </body>
 </html>
