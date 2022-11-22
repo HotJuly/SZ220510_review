@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*
+            闭包是引用关系
+            1.闭包的产生条件
+                1.两个函数具有嵌套关系
+                2.内部函数使用外部函数的变量
+
+                注意:只要满足上述两个条件,就会产生闭包对象
+                    1.有效闭包
+                        外部函数会return内部函数,这种产生的就是有效闭包
+
+                    2.无效闭包
+                        外部函数没有return内部函数,这种产生的就是无效闭包
+
+            2.闭包的产生时机
+                外部函数调用的时候
+                内部函数声明的时候
+
+                注意:
+                    如果内部就有多个函数都使用到了外层的变量,也只会产生一个闭包对象
+                        所有内部函数共享这一个闭包对象
+
+            3.闭包的优点(好处)
+                1.延长局部变量的生命周期
+                    当外部函数执行结束之后,内部的所有变量应该会被销毁
+                        但是内部的inner函数由于被return出去了,那么这个函数就不会被销毁
+                            由于js的作用域是词法作用域,那么inner函数未来可能会使用到内部的a变量
+                                那么a变量也不能死,最终被闭包保留了下来
+
+                2.方便实现js模块化
+                    将内部的变量暴露出去给外界使用,同时约束外界对该变量的操作
+
+            4.闭包的缺点(副作用)
+                浪费内存
+                内存溢出
+                    当前项目使用的内存已经超出了当前浏览器能够支配的内存空间
+                        导致程序宕机,无法正常使用
+
+                内存泄漏
+                    由于代码逻辑以及书写形式,导致浪费更多的内存去实现一个功能
+
+            5.如何解决闭包的副作用?
+                将无用的闭包及时释放掉
+                问题:闭包为什么不会销毁?
+                    垃圾回收机制就是有人正在使用某个资源,那么该资源就不会被回收
+
+                解决:将使用闭包的函数释放掉,那么由于函数被销毁了,闭包没有人使用了,那么闭包也会被销毁
+                
+                注意:如果内部具有多个函数共享同一个闭包对象,那么必须所有的内部函数全部销毁,才会让这个闭包也销毁
+
+            6.闭包是什么?
+                他是一个对象
+                它内部会缓存当前函数需要使用到的变量名称和变量的数值
+
+                官网介绍:闭包是外层函数的变量对象与内部函数的词法环境组成的内容
+                简单说法:闭包就是外层函数的作用域与内部函数的使用变量情况组成的一个全新对象
+
+            7.闭包的使用场景
+                函数防抖,函数节流
+                函数柯里化
+                
+
+        */
+      /*
+        执行上下文
+            执行上下文是一片环境,内部存储了变量对象和this指向
+                变量对象
+                    每次函数调用,都会收集当前函数中,所有的变量名和变量值
+                        变量的名称会变成变量对象的属性名
+                        变量的值会变成变量对象的属性值
+
+            执行上下文的创建时机:
+                当你调用一个函数的时候,就会为当前函数立即创建一个执行上下文
+            执行上下文的销毁时机:
+                当你函数调用结束之后,会立即销毁对应的执行上下文
+       */
+
+      // function wrap(){
+      //     var a = 1;
+      //     function inner(){
+      //         console.log('inner',a)
+      //     }
+      //     return inner
+      // }
+      // var inner = wrap();
+
+      //---------------------------------
+
+      // function wrap(){
+      //     var a = 1;
+      //     var inner = function (){
+      //         console.log('inner',a)
+      //     }
+      //     console.log(inner)
+      //     // return inner
+      // }
+      // var inner = wrap();
+      // inner();
+
+      //-----------------------------
+      //实现模块化操作
+      // var a = 1;
+      // a = 2;
+
+      // (function(){
+      //     var a = 1;
+
+      //     function addA(){
+      //         a++;
+      //     }
+
+      //     function getA(){
+      //         console.log(a)
+      //     }
+
+      //     window.fns = {
+      //         addA,
+      //         getA
+      //     }
+      // })();
+      // // a=2;
+
+      // fns.addA();
+      // fns.getA();
+
+      //------------------------------------
+      // function fn(){
+      //     var a = 1;
+      //     a++;
+      //     console.log(a);
+      // }
+
+      // fn();
+      // fn();
+
+      // function fn(){
+      //     function inner(){
+      //         console.log('inner',a)
+      //     }
+      //     var a = 1;
+      //     inner();
+      // }
+
+      // fn();
+
+      //--------------------------------
+      // function wrap(){
+      //     var a = 1;
+      //     function inner(){
+      //         console.log('inner',a)
+      //     }
+      //     return inner
+      // }
+
+      // var inner = wrap();
+      // inner();
+      // inner = null;
+
+      //--------------------------------
+      //   function wrap() {
+      //     var a = 1;
+      //     var b = 2;
+      //     var c = 3;
+      //     var d = 4;
+      //     var e = 4;
+      //     function inner1() {
+      //       console.log("inner1", a,b);
+      //     }
+
+      //     function inner2() {
+      //       console.log("inner2", b,c);
+      //     }
+
+      //     function inner3() {
+      //       console.log("inner3", c,d);
+      //     }
+      //     return {
+      //         inner1,
+      //         inner2,
+      //         inner3
+      //     };
+      //   }
+
+      //   wrap();
+
+      //---------------------------------------
+      function wrap() {
+        var a = 1;
+        function inner1() {
+          a++;
+          console.log("inner", a);
+        }
+        function inner2() {
+          a += 2;
+          console.log("inner", a);
+        }
+        return {
+          inner1,
+          inner2,
+        };
+      }
+
+      var {inner1,inner2} = wrap();
+      inner1();//2 2
+      inner1();//3 3
+      inner1();//4 4
+      inner1();//5 5
+
+      inner2();//7   3
+      inner2();//9   5
+      inner2();//11  7
+      inner2();//13  9
+
+      inner1=null;
+      inner2=null;
+
+      var {inner1,inner2} = wrap();
+      inner2();//15  3
+    </script>
+  </body>
+</html>
