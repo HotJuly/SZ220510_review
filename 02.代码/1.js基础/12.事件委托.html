@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <div id="wrap">
+      <div class="div1">div1</div>
+      <div class="div1">div2</div>
+      <h1>h1</h1>
+      <h1>h2</h1>
+    </div>
+    <script>
+      // var  divs = document.querySelectorAll('.div1');
+      // for (let index = 0; index < divs.length; index++) {
+      //     const div = divs[index];
+      //     div.onclick=function(){
+      //         console.log(1)
+      //     }
+      // }
+
+      var wrap = document.querySelector("#wrap");
+      //   wrap.onclick = function () {
+      //     console.log(1);
+      //   };
+
+      
+      function bindEvent2(ele, type, fn, selector) {
+        ele.addEventListener(type, function (event) {
+          const target = event.target;
+          if (selector) {
+            if (target.matches(selector)) {
+              fn.call(target, event);
+            //   fn()
+            }
+          } else {
+            fn.call(ele, event);
+          }
+        });
+      }
+
+      bindEvent2(
+        wrap,
+        "click",
+        function (event) {
+          console.log(1,this,event);
+        },
+        ".div1"
+      );
+
+      setTimeout(() => {
+        var div = document.createElement("div");
+        div.className = "div1";
+        div.innerText = "div3";
+        wrap.appendChild(div);
+      }, 2000);
+
+    </script>
+  </body>
+</html>
