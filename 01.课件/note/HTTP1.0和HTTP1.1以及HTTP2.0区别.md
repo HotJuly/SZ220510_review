@@ -20,6 +20,14 @@
 
 ​			HTTP 1.1支持长连接（PersistentConnection）和请求的流水线（Pipelining）处理，在一个TCP连接上可以传送多个HTTP请求和响应，减少了建立和关闭连接的消耗和延迟，在HTTP1.1中默认开启Connection： keep-alive
 
+​	此处可以扩展到:请求并发数量上,Chorme和Firefox请求并发数量为6个,其实就是6个通道
+
+​	问题:请问是跟一个服务器可以连接6个通道,还是一个浏览器最多只能有6个通道?
+
+​	答案:是跟每个服务器可以建立6个
+
+​	推荐文章:https://blog.csdn.net/qq_42033567/article/details/107804152
+
 
 
 ## HTTP和HTTPS的区别
