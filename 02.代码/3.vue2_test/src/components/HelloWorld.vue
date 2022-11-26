@@ -1,19 +1,24 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
+    <h1 @click="changeValue">Hello:{{ msg }}</h1>
   </div>
 </template>
 
 <script>
 export default {
   name: 'HelloWorld',
-  // props: {
-  //   msg: String
-  // },
-  props:["msg","fn"],
-  mounted(){
-    // 即便使用call都改不了methods方法的this指向,因为他底层使用bind强行改变了this指向
-    // this.fn.call(window,678)
+  props: {
+    msg: String,
+    value:String
+  },
+  methods:{
+    changeValue(){
+      this.$emit('input999',"我是Hello的数据")
+    }
+  },
+  model:{
+    prop:"msg",
+    event:"input999"
   }
 }
 </script>

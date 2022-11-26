@@ -20,4 +20,35 @@
 
 		总结:父组件传给子组件的是函数(this指向父组件的函数)
 
-2.
+2.provide/inject
+	使用场景:祖孙组件之间通信
+	祖先组件:
+		在祖先组件的配置对象中,添加provide配置属性,属性值可以是对象或者函数
+			注意如果想要暴露的数据,是data或者props中的数据,需要将provide写成函数格式
+	后代组件:
+		在后代组件的配置对象中,添加inject配置属性,属性值是数组
+
+	注意:
+		该方法默认情况下,暴露的数据不是响应式的,但是我们可以通过特殊的方法,把暴露的数据变成响应式的
+			1.将数据放在data中,先做一波数据劫持,在给provide使用
+			2.使用Vue.observable可以将一个普通对象变成响应式对象,最终暴露出去
+
+3.自定义事件
+	v-model(双向数据绑定)
+		input框使用
+			1.会将我们传入的data数据,作为input框的默认值进行展示
+    				<input type="text" :value="msg">
+
+			2.当用户修改input中的内容时,会自动修改对应的状态数据的值
+    				<input type="text" :value="msg" @input="(event)=>{msg=event.target.value}">
+
+		组件标签使用
+			1.通过给子组件添加标签属性的形式,给子组件传递数据(默认标签属性名:value)
+    				<HelloWorld :value="msg"/>
+
+			2.父组件给子组件绑定自定义事件,子组件可以触发该自定义事件,来向父组件传递数据(默认事件名:input)
+   				<HelloWorld :value="msg" @input="(data)=>msg=data"/>
+
+			注意:默认的属性名称和事件名是可以通过model配置选项实现自定义操作的
+
+		注意:Vue其实是单向数据流,或者说是伪双向
