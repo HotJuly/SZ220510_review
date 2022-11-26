@@ -1,9 +1,6 @@
 <template>
   <div class="hello">
-    <h1>{{ msg }}</h1>
-    <!-- <h1>{{ a }}</h1>
-    <h1>{{ b }}</h1>
-    <h1>{{ c }}</h1> -->
+    <h1 @click="handler">Hello:{{ msg }}</h1>
   </div>
 </template>
 
@@ -13,14 +10,16 @@ export default {
   props: {
     msg: String
   },
+  methods:{
+    handler(){
+      this.$emit('update:msg','我是Hello的数据')
+    }
+  },
   mounted(){
-    // console.log('hello',this.$props.msg)
-    // console.log('hello',this.$parent.msg)
-    // this.$parent.a();
-    // console.log('hello',this.$root.$options.name)
-
-    console.log(this.$attrs)
-    console.log(this.$listeners)
+    console.log(1,this)
+    // this.$bus.$on('getMsg',(data)=>{
+    //   console.log('App',data)
+    // })
   }
 }
 </script>

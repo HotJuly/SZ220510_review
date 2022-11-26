@@ -88,6 +88,8 @@ export default {
         this.$refs.input666.focus();
       })
 
+      // await this.$nextTick();
+      // this.$refs.input666.focus();
     }
   }
 }

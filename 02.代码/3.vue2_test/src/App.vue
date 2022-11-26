@@ -1,50 +1,35 @@
 <template>
   <div id="app">
-
-    <!-- <HelloWorld  
-    msg="Welcome to Your Vue.js App" 
-    a="1" 
-    b="2" 
-    c="3"
-    @abc.native=""
-    @cgh=""
-    /> -->
-
-    <HintButtonVue 
-    size="small" 
-    type="danger" 
-    title="注意这是删除按钮"
-    @click123="handler1"
-    />
-    <!-- <HintButtonVue v-bind="$data" title="注意这是删除按钮"/> -->
-    <HintButtonVue size="big" type="primary" title="没事这是添加按钮"/>
+    <h1>App:{{msg}}</h1>
+    <!-- <HelloWorld :msg.sync="msg"/> -->
+    <HelloWorld :msg="msg" @update:msg="(data)=>msg=data"/>
   </div>
 </template>
 
 <script>
 import HelloWorld from './components/HelloWorld.vue'
-import HintButtonVue from './components/HintButton.vue';
 
 export default {
   name: 'App',
   components: {
-    HelloWorld,
-    HintButtonVue
+    HelloWorld
   },
-  data() {
-    return {
-      size:"small",
-      type:"danger"
+  data(){
+    return{
+      msg:"我是App的数据"
     }
   },
-  methods:{
-    handler1(){
-      console.log('handler1触发成功,即将发送请求....')
-    }
+  mounted(){
+    // console.log(2)
+    this.$bus.$emit('getMsg',123)
+
+    setTimeout(()=>{
+      this.$destroy();
+      this.msg = 777
+    },3000)
   }
 }
 </script>
 
 <style>
-
 </style>
