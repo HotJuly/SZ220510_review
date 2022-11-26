@@ -169,7 +169,6 @@ export default class Watcher {
       this.run()
     } else {
       queueWatcher(this)
-      // queueWatcher(watcher)
     }
   }
 
