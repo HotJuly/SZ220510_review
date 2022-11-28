@@ -125,11 +125,19 @@ function Dep() {
 
 Dep.prototype = {
     addSub: function(sub) {
+        // dep.addSub(watcher);
+
+        // dep对象收集到了与他相关的所有watcher对象
+        // 响应式属性收集到了与他相关的所有watcher对象
         this.subs.push(sub);
+        // this.subs.push(watcher);
     },
 
     depend: function() {
+        // dep.depend()
+        // this->dep实例对象
         Dep.target.addDep(this);
+        // watcher.addDep(dep);
     },
 
     removeSub: function(sub) {

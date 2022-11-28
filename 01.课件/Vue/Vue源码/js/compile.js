@@ -1,4 +1,6 @@
 function Compile(el, vm) {
+    //new Compile("#app", vm);
+    //this->com对象
 
     this.$vm = vm;
 
@@ -10,16 +12,21 @@ function Compile(el, vm) {
 
         this.init();
 
+        // 这就是挂载
         this.$el.appendChild(this.$fragment);
-
+        //此处就应该是mounted生命周期的执行时间
     }
 }
 
 Compile.prototype = {
     node2Fragment: function(el) {
+        // el->app元素
         var fragment = document.createDocumentFragment(),
             child;
 
+        // 如果将页面上的一个节点,插入到文档碎片中
+        // 那么该节点会从页面上消失
+        // 这里在将app元素抄家,所有的子节点全部转移到了文档碎片中
         while (child = el.firstChild) {
             fragment.appendChild(child);
         }
@@ -32,6 +39,10 @@ Compile.prototype = {
     },
 
     compileElement: function(el) {
+        // 第一次:el->文档碎片对象
+        // 第二次:el->p元素节点
+
+        // childNodes是伪数组,[text节点,p元素节点,text节点]
         var childNodes = el.childNodes,
             me = this;
 
@@ -51,9 +62,38 @@ Compile.prototype = {
             }
         });
 
+        // 第一次进入:[text节点,p元素节点,text节点].forEach(function(node) {
+        // 第二次进入:[text节点].forEach(function(node) {
+
+        // 第一次:node->p元素节点
+        // 第二次:node->text节点
+
+        // 获取到p元素节点的文本内容=>"{{msg}}"
+        //     var text = node.textContent;
+
+        // 正则中,.的意思是a-zA-Z0-9._
+        // 正则语法中,出现括号,那么括号内部的内容等下可以直接获取到
+        //     var reg = /\{\{(.*)\}\}/;
+
+        //     if (com.isElementNode(node)) {
+        //         com.compile(p元素节点);
+
+        //     } else if (me.isTextNode(node) && reg.test(text)) {
+        //         me.compileText(text节点, 'msg');
+        //     }
+
+        //     if (node.childNodes && node.childNodes.length) {
+        //         me.compileElement(p元素节点);
+        //     }
+        // });
+
     },
 
     compile: function(node) {
+        // com.compile(p元素节点);
+        // this->com对象
+        // node->p元素节点
+        // attributes中可以获取到当前元素的所有标签属性节点组成的伪数组
         var nodeAttrs = node.attributes,
             me = this;
 
@@ -76,8 +116,9 @@ Compile.prototype = {
     },
 
     compileText: function(node, exp) {
+        //me.compileText(text节点, 'msg');
         compileUtil.text(node, this.$vm, exp);
-        
+        // compileUtil.text(text节点, vm, 'msg');
     },
 
     isDirective: function(attr) {
@@ -100,7 +141,9 @@ Compile.prototype = {
 // 指令处理集合
 var compileUtil = {
     text: function(node, vm, exp) {
+        // compileUtil.text(text节点, vm, 'msg');
         this.bind(node, vm, exp, 'text');
+        // this.bind(text节点, vm, 'msg', 'text');
     },
 
     html: function(node, vm, exp) {
@@ -128,13 +171,23 @@ var compileUtil = {
     },
 
     bind: function(node, vm, exp, dir) {
+        // this.bind(text节点, vm, 'msg', 'text');
+
         var updaterFn = updater[dir + 'Updater'];
+        // var updaterFn = updater['textUpdater'];
+        // var updateFn = textUpdater;
 
         updaterFn && updaterFn(node, this._getVMVal(vm, exp));
+        // textUpdater && textUpdater(text节点, this._getVMVal(vm, 'msg'));
+        // textUpdater && textUpdater(text节点, 'hello mvvm');
 
         new Watcher(vm, exp, function(value, oldValue) {
             updaterFn && updaterFn(node, value, oldValue);
         });
+
+        // new Watcher(vm,'msg' , function(value, oldValue) {
+        //     textUpdater && textUpdater(text节点, value, oldValue);
+        // });
 
     },
 
@@ -149,13 +202,22 @@ var compileUtil = {
     },
 
     _getVMVal: function(vm, exp) {
+        // this._getVMVal(vm, 'msg')
+
         var val = vm._data;
 
+        // exp->["msg"]
+        // exp->["person","name"]
         exp = exp.split('.');
 
         exp.forEach(function(k) {
             val = val[k];
         });
+
+        // ["person","name"].forEach(function(k) {
+        //     val = vm._data['person'];
+        //     val = person['name'];
+        // });
 
         return val;
     },

@@ -57,6 +57,29 @@ function MVVM(options) {
 
         2.页面自动显示最新的数据
             使用原生DOM操作,对页面上的某个节点进行修改
+
+    准备工作:
+      1.在对data中的数据做数据劫持的时候,会给每个响应式属性创建一个dep对象
+      2.在解析模版的时候,会给每个插值语法创建一个对应的watcher对象
+      3.在new Watcher中,会调用this.get方法
+      4.在this.get方法中,会将Dep.target修改为当前的watcher对象
+      5.watcher对象会读取当前插值表达式的结果,读取的过程中会触发相关的响应式属性的get方法
+        此处触发的是data对象中,被数据劫持过的,msg属性的get方法
+      6.在流程5的get方法中,会调用dep.depend方法开始收集dep和watcher的映射关系
+      7.使用watcher.addDep方法,让watcher对象使用depIds对象,收集与自身相关的dep
+      8.调用dep.addSub方法,让dep对象使用subs数组,收集与自身相关的watcher
+
+    响应式更新DOM流程:
+      1.开发者书写vm.msg=123,会触发msg数据代理的set方法
+      2.在数据代理的set方法中,会将最新结果传给vm._data对象的msg属性,进行赋值操作
+      3.但是对data中的属性进行赋值操作,会触发该属性数据劫持的set方法
+      4.在数据劫持的set方法中,会调用dep.notify方法
+      5.notify方法中,会遍历subs数组,调用内部每个watcher对象的update方法
+      6.在update方法中,
+        -会获取到当前表达式最新的结果
+        -获取到上一次的最新的结果
+        -比较新旧两个值,如果新旧两个值不同,就将新值存入watcher身上,留作下次使用
+        -调用this.cb回调函数,并传入本次的最新结果,用于更新对应的DOM节点
   */
 
   /*
@@ -91,7 +114,34 @@ function MVVM(options) {
   observe(data, this);
   // observe(vm._data, vm);
 
+  /*
+    MVVM源码第三部分:模版解析
+    目的:
+      1.将模版中的插值语法或者指令进行解析,展示对应的效果->首次渲染
+      2.创建watcher对象,用于实现响应式原理
+
+    流程:
+      1.构造调用Compile函数,并options.el中的内容传给该函数
+      2.判断el中的内容是否是真实DOM,如果不是就在页面上找到对应的节点
+        给$el元素准备好对应的真实DOM
+      3.将el元素中的所有子节点,全部转移到文档碎片对象中,准备进行解析
+      4.调用init方法开始解析,获取到文档碎片中的所有子节点,并开始遍历解析
+        -如果子节点是元素节点,就获取他身上所有的标签属性节点,并判断是否是指令,对其进行解析
+        -如果子节点是文本节点,而且文本内容匹配了插值语法的正则判断,
+          就获取到他内部的表达式,开始解析该文本节点
+      5.解析文本节点的过程中,会调用bind方法
+      6.在bind方法中,
+        -获取到对应的文本更新器函数textUpdater
+        -获取到对应表达式的属性值,并将该属性值传入textUpdater中,对指定文本节点进行更新
+        -创建全新的watcher对象
+          总结:每一个插值表达式都会创建一个对应的watcher对象
+      7.当所有的节点都解析结束之后,会将文档碎片对象插入到$el元素中,挂载到页面上
+
+
+  */
+
   this.$compile = new Compile(options.el || document.body, this);
+  // this.$compile = new Compile("#app", vm);
 }
 
 MVVM.prototype = {
