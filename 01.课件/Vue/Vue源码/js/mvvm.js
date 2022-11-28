@@ -16,6 +16,7 @@ function MVVM(options) {
   this.$options = options;
 
   // 一共具有三个地方存储着data对象的地址值
+  // 此处的this._data其实就是Vue2中的this.$data
   var data = this._data = this.$options.data;
   // var data = (this._data = this.$options.data);
   // var data = (this.$options.data);
@@ -45,8 +46,50 @@ function MVVM(options) {
   // ["msg","person"].forEach(function (key) {
   //   vm._proxy("msg");
   // });
+  /*
+    响应式效果
+      需求:当某个属性值发生变化的时候,页面自动显示最新的数据
+      拆解:
+        1.当某个属性值发生变化的时候
+          事件监听
+            使用Object.defineProperty,可以让一个属性具有get和set方法,
+              那么只要该属性被修改了,就会触发set方法
+
+        2.页面自动显示最新的数据
+            使用原生DOM操作,对页面上的某个节点进行修改
+  */
+
+  /*
+    MVVM源码第二部分:数据劫持
+    劫持:将某个人绑架,限制他的人身自由,逼迫他做他不想做的事情
+    目的:
+      1.将data对象身上,所有的属性都进行重写,变成响应式属性
+      2.为了实现响应式原理,用于监视用户对属性的修改和读取操作
+    次数:4次(数据劫持的次数与data中具有多少个属性名有关)
+    流程:
+      1.执行observe函数,将data传入内部,判断他是否有值而且是不是个对象
+        如果没值或者不是对象,那么数据劫持流程就结束了
+      2.在observe中,会创建一个Observer实例对象
+      3.ob对象会调用walk方法,使用Object.keys方法获取到data中所有的直系属性名,
+        并对每个属性进行执行defineReactive
+      4.在defineReactive中,
+        -会创建一个全新的dep对象
+          总结:每具有一个响应式属性就会创建一个对应的dep对象
+        -将当前属性值传入observe函数,如果是个对象那么就回到流程2,继续深度递归数据劫持
+        -使用Object.defineProperty方法,对data对象身上的某个属性进行重写操作
+          将该属性的value值去掉,变成get/set方法
+            但其实,Vue很巧妙的使用了闭包将原先的value值缓存起来了
+            如果用户读取该属性的值的时候,会触发get方法,自动返回闭包val中的结果
+            如果用户修改该属性的值的时候,会触发set方法
+              -判断新旧值是否相同,相同直接return,后续代码不执行
+              -将新值存入闭包中进行缓存
+              -将新值传入observe,如果是个对象,那么就进行深度数据劫持
+              -调用dep.notify方法,通知DOM进行更新
+  
+  */
 
   observe(data, this);
+  // observe(vm._data, vm);
 
   this.$compile = new Compile(options.el || document.body, this);
 }
