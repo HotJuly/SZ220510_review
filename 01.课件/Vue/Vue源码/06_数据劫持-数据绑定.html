@@ -7,6 +7,8 @@
   <body>
     <div id="app">
       <p class="b">{{msg}}</p>
+      <p class="b">{{person.name}}</p>
+      <p class="b">{{arr.0}}</p>
     </div>
     <script src="./js/observer.js"></script>
     <script src="./js/watcher.js"></script>
@@ -36,13 +38,47 @@
           person:{
             name:"xiaoming",
             msg:"123"
-          }
+          },
+          arr:[6,7,8]
         }
       });
 
       setTimeout(()=>{
-        vm.msg = "hello world!!!!!!!!!!!!!!!!!!!!!!!"
+        // vm.msg = "hello world!!!!!!!!!!!!!!!!!!!!!!!"
+        // vm.person.name = "xiaohong66666666666"
+        vm.arr[0] = 9;
+        console.log(vm.arr)
       },3000)
+
+      /*
+        数据代理:
+          给vm实例对象身上,新增一些与data中同名的属性名
+          vm.msg->数据代理->会拥有get/set方法
+            如果从vm对象身上直接读取msg属性,会触发get方法
+            如果从vm对象身上直接修改msg属性,会触发set方法
+
+        数据劫持:
+          数据劫持就给将data中所有的属性,都变成具有get/set方法的属性
+          只要读取/修改data对象中的属性,就会触发数据劫持的get/set
+          vm._data.msg => vm.$options.data.msg
+      
+
+        语法:vm.person.name = "xiaohong66666666666"
+        流程:
+          1.读取vm变量中的结果,最终会得到一个组件实例对象vm
+          2.会从vm对象身上,读取一个person属性,会触发数据代理的get方法
+          3.数据代理的get方法,会读取内存中data对象的msg的值,会触发数据劫持的get方法
+          4.根据流程3,可以获取到一个person对象
+          5.从person对象身上,修改name属性,会触发数据劫持的set方法
+
+          注意:数据劫持的时候,不仅是遍历data对象所有的属性,进行改造
+            还会遍历内部出现过的其他对象,这些被嵌套的对象的属性也会进行改造
+
+        总结:
+          数据代理是为了给开发者使用,方便开发者开发
+          数据劫持是为了给Vue的响应式原理使用的,目的就是为了当用户修改了data中的数据,会导致页面更新
+
+      */
     </script>
   </body>
 </html>
