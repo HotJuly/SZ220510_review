@@ -7,14 +7,28 @@
   <body>
     <div id="app">
       <p class="b">{{msg}}</p>
-      <p class="b">{{person.name}}</p>
-      <p class="b">{{arr.0}}</p>
     </div>
     <script src="./js/observer.js"></script>
     <script src="./js/watcher.js"></script>
     <script src="./js/compile.js"></script>
     <script src="./js/mvvm.js"></script>
     <script>
+      /*
+        MVVM源码前言:
+          1.这是Vue1的源码
+          2.他与Vue2源码的区别,他没有生命周期,没有虚拟DOM,没有diff算法
+          3.Vue1和Vue2的响应式原理是一样的
+
+        学习MVVM源码的目的:
+          1.为了应付面试
+          2.捋清楚响应式原理中整体流程,并且写成文档
+          3.搞清楚,Vue是怎么解析当前页面的内容,将其中的插值语法变成data中对应的数据的
+
+        看源码的技巧:
+          1.搞清楚每个函数的this和参数
+          2.没用到的函数,不要看
+      
+      */
       var vm = new MVVM({
         el: "#app",
         data: {
