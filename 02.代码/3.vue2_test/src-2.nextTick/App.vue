@@ -62,7 +62,7 @@ export default {
     //   console.log(4)
     // })
 
-    
+
   },
   methods: {
     changeEdit() {
@@ -82,11 +82,22 @@ export default {
       
       */
 
-      this.isEdit=true;
+      this.isEdit = true;
 
-      this.$nextTick(()=>{
+      this.$nextTick(() => {
         this.$refs.input666.focus();
+        console.log(3)
       })
+
+      // Promise.resolve().then(() => {
+      //   console.log(2)
+      // })
+
+      // this.$nextTick(() => {
+      //   console.log(1)
+      // })
+
+      // this.isShow = true;
 
       // await this.$nextTick();
       // this.$refs.input666.focus();
