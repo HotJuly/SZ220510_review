@@ -1,6 +1,12 @@
 <template>
   <div id="app">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <ul>
+      <li v-for="(item,index) in arr" :key="item">
+        <label>{{item}}</label>
+        <input type="text">
+      </li>
+    </ul>
+    <button @click="add">添加</button>
   </div>
 </template>
 
@@ -14,36 +20,13 @@ export default {
   },
   data(){
     return{
-      msg:"我是初始化数据"
+      arr:[1,2,3,4,5]
     }
   },
-  // beforeCreate(){
-  //   console.log('--------beforeCreate--------',this,this.$data,this.msg,this.$el)
-  // },
-  // created(){
-  //   console.log('--------created--------',this,this.$data,this.msg,this.$el)
-  // },
-  // beforeMount(){
-  //   console.log('--------beforeMount--------',this,this.$data,this.msg,this.$el)
-  // },
-  // beforeMount(){
-  //   console.log('--------beforeMount--------',this.$vnode,this._vnode)
-  // },
-  // mounted(){
-  //   console.log('--------mounted--------',this,this.$data,this.msg,this.$el)
-  // }
-  
-  beforeCreate(){
-    console.log('--------App beforeCreate--------')
-  },
-  created(){
-    console.log('--------App created--------')
-  },
-  beforeMount(){
-    console.log('--------App beforeMount--------')
-  },
-  mounted(){
-    console.log('--------App mounted--------')
+  methods:{
+    add(){
+      this.arr.splice(1,0,6);
+    }
   }
 }
 </script>
