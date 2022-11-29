@@ -8,7 +8,7 @@
 export default {
   name: 'Home',
   mounted(){
-    console.log(this.$router,this.$route)
+    // console.log(this.$router,this.$route)
   }
 }
 </script>
