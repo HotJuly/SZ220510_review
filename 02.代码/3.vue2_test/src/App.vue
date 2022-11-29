@@ -1,31 +1,21 @@
 <template>
   <div id="app">
-    <ul>
-      <li v-for="(item,index) in arr" :key="item">
-        <label>{{item}}</label>
-        <input type="text">
-      </li>
-    </ul>
-    <button @click="add">添加</button>
+    <router-view/>
+    <router-link to="/home">toHome</router-link>
+    <!-- <router-link to="/about">toAbout</router-link> -->
+    <button @click="toAbout">toAbout</button>
+    <h1 v-if="$route.meta.isShowHeader">我是header</h1>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
 
 export default {
   name: 'App',
-  components: {
-    HelloWorld
-  },
-  data(){
-    return{
-      arr:[1,2,3,4,5]
-    }
-  },
   methods:{
-    add(){
-      this.arr.splice(1,0,6);
+    toAbout(){
+      // this.$router.push('/about');
+      this.$router.replace('/about');
     }
   }
 }
