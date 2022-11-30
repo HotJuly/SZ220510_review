@@ -23,6 +23,26 @@ function filterAsyncRoutes(asyncRoutes,routeNames){
   return newAsyncRoutes;
 }
 
+function mapButtons(buttons){
+  /*
+    现有数据->['btn.Trademark.add','btn.Trademark.update','btn.Trademark.remove'...]
+  
+    转换成以下结构:
+      {
+        'btn.Trademark.add':true,
+        'btn.Trademark.update':true,
+        'btn.Trademark.remove':true,
+        .....
+      }
+  */
+  const obj = {};
+  buttons.forEach((str)=>{
+    obj[str] = true;
+  })
+
+  return obj;
+}
+
 const getDefaultState = () => {
   return {
     token: getToken(),
@@ -66,7 +86,8 @@ const mutations = {
 
     state.routes = [...constantRoutes,...newAsyncRoutes,...anyRoutes];
 
-    state.buttons = buttons;
+    // state.buttons = buttons;
+    state.buttons = mapButtons(buttons);
   }
 }
 

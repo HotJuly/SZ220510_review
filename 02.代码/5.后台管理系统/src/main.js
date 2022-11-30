@@ -58,6 +58,17 @@ Vue.use(ElementUI, { locale })
 
 Vue.config.productionTip = false
 
+Vue.directive('has',{
+  inserted(el,{value}){
+    // console.log(el,value)
+    const buttons = store.state.user.buttons;
+    // if(!buttons.includes(value)){
+    if(!buttons[value]){
+      el.parentNode.removeChild(el);
+    }
+  }
+})
+
 
 new Vue({
   el: '#app',
