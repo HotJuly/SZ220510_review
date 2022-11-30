@@ -36,7 +36,10 @@ export default {
 
     // 元对象
     let user = {
-      name:"xiaoming"
+      name:"xiaoming",
+      wife:{
+        name:"666"
+      }
     };
 
     let user2 = ref(user);
