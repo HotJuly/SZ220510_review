@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <body>
+    <script>
+      /*  
+            响应式:当某个数据发生变化的时候,页面自动展示最新的结果
+
+            Vue2的响应式
+                核心API:Object.defineProperty
+                    该方法可以给某个对象添加或者重写一个属性
+                        可以属性变成访问描述符,也就是说这个属性会具有get/set方法
+                    数据劫持其实就是将data对象中,所有的属性全部变成get/set方法
+                问题:
+                    1.如果是新增一个属性,必须使用Vue.set或者this.$set方法,否则会出现该属性是非响应式属性的效果
+                        Vue2监视不到用户新增属性这个操作
+                        新增的属性并没有经过Object.defineProperty方法,没有数据劫持,所以Vue无法知道已新增属性这件事情
+
+                    2.如果使用delete删除某个属性,无论是不是响应式属性,Vue都监视不到
+                        这是因为Object.defineProperty方法,只能监视属性的修改和读取
+
+                    3.如果使用数组的下标直接操作数组内容,没有响应式效果
+                        其实能做得到,但是尤大大故意不做,这是为了考虑到性能问题
+                            为每个下标都创建一个dep对象,太浪费性能了,而且平常根本用不到
+                                所以最终决定重写数组的7种方法来解决这类问题
+
+
+            Vue3的响应式
+                核心API:Proxy构造函数
+                    该构造函数调用,可以返回一个代理对象
+                    我们对这个代理对象做的任何事情,他都会对元对象做相同的事情
+        */
+      let obj = {
+        name: "xiaoming",
+      };
+
+      //   Object.defineProperty(obj, "name", {
+      //     get() {
+      //       console.log("get");
+      //       return "xiaohong";
+      //     },
+      //     set() {
+      //       console.log("set");
+      //     },
+      //   });
+
+      //   setTimeout(() => {
+      //     //   obj.name = "xiaohong";
+      //     // obj.age = 23;
+      //     delete obj.name;
+      //     console.log(obj);
+      //   }, 2000);
+
+      //---------------------------------
+
+      let proxyObj = new Proxy(obj, {
+        get() {
+          console.log("get");
+          return "xiaohong";
+        },
+        set(target, key, value) {
+          // Proxy方法比Object.defineProperty方法更加强大
+          // Proxy的set不仅可以监视修改属性操作,还可以监视到新增属性操作
+          // 所以Vue3中才废弃了Vue.set和this.$set
+
+          console.log("set", target, key, value);
+          target[key] = value;
+
+          //   通知DOM进行更新
+          //  dep.notify();
+        },
+        deleteProperty(target, key) {
+          // Proxy可以通过deleteProperty,监视到删除属性操作,所以Vue3废弃了Vue.delete和this.$delete方法
+          console.log("deleteProperty", target, key);
+          //   delete target[key];
+
+          Reflect.deleteProperty(target, key);
+
+          //   通知DOM进行更新
+          //   dep.notify()
+        },
+        has() {
+          return true;
+        },
+        getPrototypeOf() {
+          return {
+            name: "老王",
+          };
+        },
+      });
+
+      // console.log(proxyObj)
+      setTimeout(() => {
+        // proxyObj.name = "xiaohong";
+        // proxyObj.age = 23;
+        delete proxyObj.name;
+        console.log(proxyObj,obj);
+        // console.log('abcd' in proxyObj)
+        // console.log(Object.getPrototypeOf(proxyObj));
+      }, 2000);
+
+      // let arr = [6,7,8];
+
+      // let proxyObj = new Proxy(arr, {
+      //     get() {
+      //       console.log("get");
+      //       return "xiaohong";
+      //     },
+      //     set(target,key,value) {
+
+      //       console.log("set",target,key,value);
+      //       target[key] = value;
+
+      //     },
+      //     deleteProperty(target,key){
+      //       console.log("deleteProperty",target,key);
+      //       delete target[key];
+
+      //     }
+      //   });
+
+      //   setTimeout(() => {
+      //     proxyObj[0] = 9;
+      //   }, 2000);
+    </script>
+  </body>
+</html>
