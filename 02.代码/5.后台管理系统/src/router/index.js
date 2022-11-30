@@ -31,6 +31,20 @@ import Layout from '@/layout'
  * all roles can be accessed
  */
 
+/*
+  路由分为三种
+    1.常量路由(又称为静态路由)
+      无论当前账号是什么权限,大家都能使用的就是常量路由
+
+    2.异步路由
+      这类路由需要用户帐号具有特殊的权限才能使用
+
+    3.任意路由
+      这类路由用于匹配任意路径,必须写在routes数组的最后面
+        必须在最后注册
+
+*/
+
 export const constantRoutes = [
   {
     path: '/login',
@@ -56,6 +70,9 @@ export const constantRoutes = [
     }]
   },
   
+]
+
+export const asyncRoutes = [
   {
     path: '/product',
     component: Layout,
@@ -88,8 +105,10 @@ export const constantRoutes = [
       }
     ],
     meta: { title: '商品管理', icon: 'el-icon-s-shop' }
-  },
-  
+  }
+]
+
+export const anyRoutes = [
   // 404 page must be placed at the end !!!
   { path: '*', redirect: '/404', hidden: true }
 ]

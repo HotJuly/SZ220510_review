@@ -1,12 +1,43 @@
 import { login, logout, getInfo } from '@/api/user'
 import { getToken, setToken, removeToken } from '@/utils/auth'
-import { resetRouter } from '@/router'
+import router, { resetRouter , asyncRoutes , anyRoutes, constantRoutes} from '@/router'
+import {cloneDeep} from 'lodash';
+
+function filterAsyncRoutes(asyncRoutes,routeNames){
+  /*
+    需求:根据当前账号权限,过滤完整的异步路由数组,得到一个用户有资格访问的异步路由组成的数组
+    返回值数据类型:routeObj[]
+
+    filter方法,会生成一个全新的数组,会从旧数组中挑出部分数据保留,但是不会修改数据内容
+  */
+  const newAsyncRoutes = asyncRoutes.filter((routeObj)=>{
+    const name = routeObj.name;
+
+    // if(routeObj.children&&routeObj.children.length){
+    if(routeObj.children?.length){
+
+      routeObj.children = filterAsyncRoutes(routeObj.children,routeNames);
+    }
+    return routeNames.includes(name);
+  })
+  return newAsyncRoutes;
+}
 
 const getDefaultState = () => {
   return {
     token: getToken(),
     name: '',
-    avatar: ''
+    avatar: '',
+
+    // 用于存储当前账号按钮级别的权限信息
+    buttons:[],
+
+    // 用于存储当前账号能够访问的路由的别名组成的数组
+    routeNames:[],
+
+    // 用于存储当前项目能访问的所有路由对象
+    // 其实主要是为了解决左侧列表显示错误的问题
+    routes:[]
   }
 }
 
@@ -24,6 +55,18 @@ const mutations = {
   },
   SET_AVATAR: (state, avatar) => {
     state.avatar = avatar
+  },
+  SET_PERMISSION: (state, {buttons,routes}) => {
+    state.routeNames = routes;
+
+    // 1.过滤asyncRoutes数组,得到当前账号能够访问的异步路由数组
+    const newAsyncRoutes = filterAsyncRoutes(cloneDeep(asyncRoutes),routes);
+
+    router.addRoutes([...newAsyncRoutes,...anyRoutes]);
+
+    state.routes = [...constantRoutes,...newAsyncRoutes,...anyRoutes];
+
+    state.buttons = buttons;
   }
 }
 
@@ -75,6 +118,7 @@ const actions = {
 
         commit('SET_NAME', name)
         commit('SET_AVATAR', avatar)
+        commit('SET_PERMISSION',data)
         resolve(data)
       }).catch(error => {
         reject(error)
